@@ -1,0 +1,49 @@
+server:
+  port: ${GATEWAY_PORT:8765}  # Folosim o variabil? de mediu pentru portul gateway-ului
+
+spring:
+  application:
+    name: ${GATEWAY_APP_NAME:gateway-api}  # Numele aplica?iei (serviciul gateway)
+  cloud:
+    gateway:
+      routes:
+        - id: user-api
+          uri: lb://${USER_SERVICE_URI:USER-API}
+          predicates:
+            - Path=/api/v1/users  # Permite accesul la crearea conturilor de user f?r? autentificare
+          filters:
+            - RemoveRequestHeader=Cookie
+
+        - id: user-api-protected
+          uri: lb://${USER_SERVICE_URI:USER-API}
+          predicates:
+            - Path=/api/v1/users/**  # Toate celelalte rute din /users necesit? autentificare
+          filters:
+            - RemoveRequestHeader=Cookie
+
+        - id: place-api
+          uri: lb://${USER_SERVICE_URI:USER-API}
+          predicates:
+            - Path=/api/v1/places  # Permite accesul la crearea conturilor de place f?r? autentificare
+          filters:
+            - RemoveRequestHeader=Cookie
+
+        - id: place-api-protected
+          uri: lb://${USER_SERVICE_URI:USER-API}
+          predicates:
+            - Path=/api/v1/places/**  # Toate celelalte rute din /places necesit? autentificare
+          filters:
+            - RemoveRequestHeader=Cookie
+
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8080/realms/master}  # Issuer URI-ul pentru Keycloak
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_DEFAULT_ZONE:http://localhost:8761/eureka/}  # Eureka URL folose?te variabil? de mediu
+    register-with-eureka: true
+    fetch-registry: true
