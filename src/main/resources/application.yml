@@ -36,9 +36,15 @@ spring:
             - RemoveRequestHeader=Cookie
 
         - id: post-api-protected
-          uri: lb://${USER_SERVICE_URI:POST-API}
+          uri: lb://${POST_SERVICE_URI:POST-API}
           predicates:
             - Path=/api/v1/posts/**  # Toate celelalte rute din /places necesit? autentificare
+          filters:
+            - RemoveRequestHeader=Cookie
+        - id: image-api-protected
+          uri: lb://${IMAGE_SERVICE_URI:IMAGE-API}
+          predicates:
+            - Path=/api/v1/images/**  # Toate celelalte rute din /places necesit? autentificare
           filters:
             - RemoveRequestHeader=Cookie
 
