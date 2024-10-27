@@ -48,7 +48,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           ssh -i ~/.ssh/id_rsa -p 15621 antonio@antonio-dev.go.ro "
-            docker load -i /home/pi/gateway-api.tar && \
+            docker load -i /home/antonio/gateway-api.tar && \
             docker run -d --name gateway-api -p 8765:8765 gateway-api:latest
           "
 
